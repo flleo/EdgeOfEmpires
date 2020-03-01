@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Age of Empires</title>
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <!-- Don't use this in production: -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <link rel="shortcut icon"
+    href="https://static.ageofempires.com/aoe/wp-content/themes/msgpwebteam/dist/images/favicon_b103a677.ico"
+    type="image/x-icon">
+
+  <link rel="stylesheet" href="css/style.css" />
+
+</head>
+
+<body>
+  <header>
+    <h1 class="site-title header__block">
+      <a class="home-link" href="">
+        <img class="header__logo"
+          src="https://static.ageofempires.com/aoe/wp-content/themes/msgpwebteam/dist/images/header-logo_e3f9ab8b.png"
+          alt="Age of Empires Home">
+      </a>
+    </h1>
+  </header>
+
+  <div id="root"></div>
+  <div id="army_type"></div>
+  <div id="root2"></div>
+  <div id="civilization_bonus"></div>
+  <div id="root3"></div>
+  <div id="name"></div>
+  <div id="civilization_bonus2"></div>
+  <div id="army_type2"></div>
+  <p id="p">La lista de civilizaciones, es:</p>
+  <textarea id="list"></textarea>
+
+
+  <script type="text/babel" >
+
+    // Variables
+    var civi = document.getElementById('root')
+    var civilizaciones = []
+    var nombres = []
+    var tipo;
+    var civilization_bonus = "";
+    var name;
+
+    // Civilizaciones
+
+    function civilizations() {
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://age-of-empires-2-api.herokuapp.com/api/v1/civilizations', true);
+      xhr.send();
+      xhr.onload = function () {
+        var comics_d = JSON.parse(this.responseText);
+        comics_d.civilizations.forEach(r => {
+          civilizaciones.push(r)
+        });
+
+        civilizaciones.forEach(n => {
+          nombres.push(n.name)
+        })
+
+        ReactDOM.render(
+          <ArmyType />,
+          document.getElementById('root')
+        )
+
+        ReactDOM.render(
+          <CivilizationBonus />,
+          document.getElementById('root2')
+        )      
+
+        ReactDOM.render(
+          <CivilizationList />,
+          document.getElementById('root3')
+        )
+
+      }
+
+    }
+
+    civilizations();
+
+    // ArmyType
+
+    class ArmyType extends React.Component {
+
+      constructor(props) {
+        super(props);
+        this.state = { value: 'Aztecs' };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+
+      }
+
+      handleChange(event) {
+        this.setState({ value: event.target.value });
+      }
+
+      // Localizamos  el army_type
+
+      handleSubmit(event) {
+
+        civilizaciones.forEach(c => {
+          if (c.name == this.state.value) {
+            tipo = c.army_type
+
+          }
+        })
+
+        // Renderizamos el army_type
+        ReactDOM.render(
+          <p>El tipo de ejercito es: <span>{tipo}</span></p>,
+          document.getElementById('army_type')
+        )
+
+        event.preventDefault();
+      }
+
+      render() {
+
+        var Data = nombres,
+          MakeItem = function (X) {
+            return <option key={X} value={X}>{X}</option>;
+          };
+
+        return (
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Selecciona civilizacion:&nbsp;
+        <select value={this.state.value} onChange={this.handleChange}>
+                {Data.map(MakeItem)}
+              </select>
+            </label>&nbsp;
+      <input type="submit" value="Tipo" />
+          </form>
+        );
+        event.preventDefault();
+      }
+    }
+
+    // Civilization Bonus
+
+    class CivilizationBonus extends React.Component {
+
+      constructor(props) {
+        super(props);
+        this.state = { value: 'Aztecs' };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+      }
+
+      handleChange(event) {
+        this.setState({ value: event.target.value });
+      }
+
+      // Localizamos  el army_type
+
+      handleSubmit(event) {
+
+        civilizaciones.forEach(c => {
+          if (c.name == this.state.value) {
+            civilization_bonus = c.civilization_bonus
+          }
+        })
+
+        // Renderizamos el civilization_bonus
+        ReactDOM.render(
+          <p>El civlization_bonus es: <span>{civilization_bonus.toString()}</span></p>,
+          document.getElementById('civilization_bonus')
+        )
+
+        event.preventDefault();
+      }
+
+      render() {
+
+        var Data = nombres,
+          MakeItem = function (X) {
+            return <option key={X} value={X}>{X}</option>;
+          };
+
+        return (
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Selecciona civilizacion:&nbsp;
+        <select value={this.state.value} onChange={this.handleChange}>
+                {Data.map(MakeItem)}
+              </select>
+            </label>&nbsp;
+      <input type="submit" value="Bonos" />
+          </form>
+        );
+        event.preventDefault();
+      }
+    }
+
+    class NameArmyTypeCivilizationBonus extends React.Component {
+
+      constructor(props) {
+        super(props);
+        this.state = { value: 'Aztecs' };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.nombres = nombres.toString();
+      }
+
+      getNombres = () => {
+
+        document.getElementById('p').style.visibility = 'visible'
+        document.getElementById('list').style.visibility = 'visible'
+        // Renderizamos la lista
+        ReactDOM.render(
+          this.nombres,
+          document.getElementById('list')
+        )
+
+        event.preventDefault();
+      }
+
+      handleChange(event) {
+        this.setState({ value: event.target.value });
+      }
+
+      // Localizamos  el army_type y el nombre y los bonos
+
+      handleSubmit(event) {
+
+        civilizaciones.forEach(c => {
+          if (c.name == this.state.value) {
+            tipo = c.army_type
+            civilization_bonus = c.civilization_bonus
+            name = c.name
+
+          }
+        })
+
+        // Renderizamos el nombre
+        ReactDOM.render(
+          <p>El nombre de la civilizacion es: <span>{name}</span></p>,
+          document.getElementById('name')
+        )
+
+        // Renderizamos el army_type
+        ReactDOM.render(
+          <p>El tipo de ejercito es: <span>{tipo}</span></p>,
+          document.getElementById('army_type2')
+        )
+
+        // Renderizamos el civilization_bonus
+        ReactDOM.render(
+          <p>El civlization_bonus es: <span>{civilization_bonus.toString()}</span></p>,
+          document.getElementById('civilization_bonus2')
+        )
+
+        event.preventDefault();
+      }
+
+      render() {
+
+        var Data = nombres,
+          MakeItem = function (X) {
+            return <option key={X} value={X}>{X}</option>;
+          };
+
+        return (
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Selecciona civilizacion:&nbsp;
+              <select value={this.state.value} onChange={this.handleChange}>
+                {Data.map(MakeItem)}
+              </select>
+            </label>&nbsp;
+            <input type="submit" value="Trio" />
+          </form>
+        );
+        event.preventDefault();
+      }
+    }
+
+    // Civilization List
+
+    class CivilizationList extends React.Component {
+
+      constructor(props) {
+        super(props);
+
+      }
+
+      getNombres = () => {
+        this.NameArmyTypeCivilizationBonus.getNombres();
+      }
+
+      render() {
+        return (
+         
+          <div>
+            <NameArmyTypeCivilizationBonus ref={element => {
+              this.NameArmyTypeCivilizationBonus = element
+            }
+            } />
+            <button onClick={this.getNombres}>Lista</button>
+          </div>
+        );      
+      }
+      
+    }
+
+
+
+  </script>
+
+
+</body>
+
+</html>

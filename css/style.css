@@ -1,0 +1,29 @@
+body {
+  background-color: #ffe4c4;
+}
+
+header {
+  font-family: Source Sans Pro,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  direction: row;
+}
+
+span {
+  font-weight: bold;
+}
+
+#p {
+  visibility: collapse;
+}
+
+#list {
+  visibility: collapse;
+  height: 100px;
+  width: 200px;
+}
+/*# sourceMappingURL=style.css.map */
